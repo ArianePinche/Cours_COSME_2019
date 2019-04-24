@@ -8,6 +8,7 @@
     <!-- réglage de la sortie au format HTML avec un encodage de caractères UTF-8 -->
     <xsl:output method="html" encoding="UTF-8"/>
     
+    <xsl:template match="teiHeader"/>
     <!-- Cette règle permet de parser l'arbre XML source depuis le racine -->
     <xsl:template match="/">
         <!-- Ci-dessous ajout des balises HTML de structuration du fichier -->
@@ -44,9 +45,35 @@
             <div id="main">
                 <div id="play">
                     <!-- Les différents éléments du fichier XML seront insérés à ce niveau de la structure -->
+                    <xsl:apply-templates select="//div[@type='play']"/>
                 </div>
             </div>
         </body>
     </html>
     </xsl:template>   
+    <!--1, NB : XSL:value-of permet de récupérer le texte qui se trouve dans la balise head de la div[@type='play'] -->  
+    <xsl:template match="div[@type='play']/head">
+        <h1><xsl:value-of select="."/></h1>
+    </xsl:template>
+    <!-- 2 --> 
+    <xsl:template match="div[@type='act']">
+        <div class="actTitle" id="{@xml:id}">
+            <xsl:value-of select="head"/>
+        </div>
+        <!-- l'apply-templates permet d'appliquer les règles des éléments enfants de div[@type='act'] -->
+        <xsl:apply-templates/>
+    </xsl:template>
+    
+    <xsl:template match="div[@type='scene']">
+        <div class="sceneTitle" id="{@xml:id}">
+            <xsl:value-of select="head"/>
+        </div>
+        <div class="stage">
+            <xsl:value-of select="stage"/>
+        </div>
+        <xsl:apply-templates/>
+    </xsl:template>
+    
+    <xsl:template match="head"/>
+    
 </xsl:stylesheet>
